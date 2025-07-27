@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Il Progetto Piemon - Diario di Sviluppo</title>
+    <meta name="description" content="Segui lo sviluppo di Piemon attraverso il nostro calendario degli aggiornamenti. Scopri le novità del gioco ambientato a UniTo.">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="keywords" content="Piemon sviluppo, devlog, calendario aggiornamenti, UniTo game">
+    <meta name="author" content="Piemon Team">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Il Progetto Piemon - Diario di Sviluppo">
+    <meta property="og:description" content="Segui lo sviluppo di Piemon attraverso il nostro calendario degli aggiornamenti.">
+    <meta property="og:image" content="https://piemon.it/assets/images/og-image.png">
+    <meta property="og:url" content="https://piemon.it/pages/project.html">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="it_IT">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Il Progetto Piemon - Diario di Sviluppo">
+    <meta name="twitter:description" content="Segui lo sviluppo di Piemon attraverso il nostro calendario degli aggiornamenti.">
+    <meta name="twitter:image" content="https://piemon.it/assets/images/og-image.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="../assets/images/favicon.png" type="image/png">
+    <link rel="apple-touch-icon" href="../assets/images/apple-touch-icon.png">
+    <link rel="manifest" href="../manifest.json">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/components/navbar.css">
+    <link rel="stylesheet" href="../css/components/footer.css">
+    <link rel="stylesheet" href="../css/components/modal.css">
+    <link rel="stylesheet" href="../css/pages/project.css">
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#D72323">
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="pokeball-loader">
+            <div class="pokeball">
+                <div class="pokeball-upper"></div>
+                <div class="pokeball-lower"></div>
+                <div class="pokeball-center">
+                    <div class="pokeball-button"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navbar Container -->
+    <div id="navbar-container">
+        <div class="skeleton-nav"></div>
+    </div>
+
+    <!-- Page Content Wrapper -->
+    <div class="page-content-wrapper">
+        <main class="main-content container">
+            
+            <section class="project-section">
+                <h1 class="project-title">Diario di Sviluppo</h1>
+                <p class="project-subtitle">
+                    Segui i progressi del progetto Piemon dal 29 giugno 2025. Clicca su un giorno con un aggiornamento per vederne i dettagli.
+                </p>
+
+                <div id="calendar-container" class="calendar-container">
+                    <div class="calendar-header">
+                        <button id="prev-month-btn" class="calendar-nav-btn" aria-label="Mese precedente">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="15 18 9 12 15 6"></polyline>
+                            </svg>
+                        </button>
+                        <h2 id="month-year-header" class="month-year-header"></h2>
+                        <button id="next-month-btn" class="calendar-nav-btn" aria-label="Mese successivo">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="calendar-weekdays">
+                        <div>Lun</div>
+                        <div>Mar</div>
+                        <div>Mer</div>
+                        <div>Gio</div>
+                        <div>Ven</div>
+                        <div>Sab</div>
+                        <div>Dom</div>
+                    </div>
+                    <div id="calendar-grid" class="calendar-grid" role="grid" aria-label="Calendario aggiornamenti">
+                        <!-- Calendar days will be inserted here by JS -->
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Update Modal -->
+    <div id="update-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-content">
+            <button id="close-modal-btn" class="modal-close-btn" aria-label="Chiudi modal">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
+                </svg>
+            </button>
+            <h3 id="modal-title" class="modal-title"></h3>
+            <div id="modal-body" class="modal-body">
+                <!-- Update content will be inserted here by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Container -->
+    <div id="footer-container">
+        <div class="skeleton-footer"></div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="../js/config.js"></script>
+    <script src="../js/components/component-loader.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/components/calendar.js"></script>
+    <script src="../js/pages/project.js"></script>
+</body>
+</html>
