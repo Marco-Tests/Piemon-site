@@ -56,6 +56,12 @@ class ComponentLoader {
             // Fix relative paths if needed
             if (containerId === 'navbar-container') {
                 this.fixNavbarPaths();
+                // Re-initialize mobile menu after navbar is loaded
+                if (window.piemon && window.piemon.initializeMobileMenu) {
+                    setTimeout(() => {
+                        window.piemon.initializeMobileMenu();
+                    }, 100);
+                }
             }
 
             // Dispatch custom event
