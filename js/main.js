@@ -22,6 +22,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Set active navigation state
             setActiveNavLink();
             
+            // Initialize mobile menu
+            initializeMobileMenu();
+            
             // Initialize theme (future feature)
             initializeTheme();
             
@@ -78,7 +81,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Remove from DOM after animation completes
                 setTimeout(() => {
                     loadingOverlay.remove();
-                }, 350);
+                    // Close menu when scrolling
+                let lastScrollY = window.scrollY;
+                window.addEventListener('scroll', () => {
+                    if (Math.abs(window.scrollY - lastScrollY) > 50 && navLinks.classList.contains('nav-links-active')) {
+                        navLinks.classList.remove('nav-links-active');
+                        navToggle.setAttribute('aria-expanded', 'false');
+                    }
+                    lastScrollY = window.scrollY;
+                });
+            }, 350);
             }, 500);
         }
     }
@@ -127,6 +139,44 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         }, 100);
+    }
+    
+    /**
+     * Initialize mobile menu toggle
+     */
+    function initializeMobileMenu() {
+        // Wait for navbar to load
+        setTimeout(() => {
+            const navToggle = document.querySelector('.nav-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            const navbar = document.querySelector('.main-nav');
+            
+            if (navToggle && navLinks) {
+                navToggle.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    navLinks.classList.toggle('nav-links-active');
+                    navToggle.setAttribute('aria-expanded', 
+                        navLinks.classList.contains('nav-links-active') ? 'true' : 'false'
+                    );
+                });
+                
+                // Close menu when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!navbar.contains(e.target) && navLinks.classList.contains('nav-links-active')) {
+                        navLinks.classList.remove('nav-links-active');
+                        navToggle.setAttribute('aria-expanded', 'false');
+                    }
+                });
+                
+                // Close menu when clicking on a link
+                navLinks.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        navLinks.classList.remove('nav-links-active');
+                        navToggle.setAttribute('aria-expanded', 'false');
+                    });
+                });
+            }
+        }, 200);
     }
     
     /**
@@ -205,7 +255,8 @@ document.addEventListener('DOMContentLoaded', function() {
     window.piemon = {
         updateYear,
         setActiveNavLink,
-        hideLoadingOverlay
+        hideLoadingOverlay,
+        initializeMobileMenu
     };
     
     // Initialize application
