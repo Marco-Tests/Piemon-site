@@ -14,6 +14,7 @@
     display: flex;
     align-items: center;
     transition: transform var(--transition-base);
+    overflow: visible; /* Permette al dropdown di essere visibile */
 }
 
 .main-nav.nav-hidden {
@@ -25,6 +26,7 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    position: relative; /* Aggiunto per il dropdown */
 }
 
 .nav-brand {
@@ -127,12 +129,23 @@
     border: none;
     cursor: pointer;
     padding: var(--spacing-xs);
+    color: var(--navbar-footer-text-hover-color);
+    transition: transform var(--transition-fast);
 }
 
 .nav-toggle svg {
     width: 24px;
     height: 24px;
     color: var(--navbar-footer-text-hover-color);
+    transition: transform var(--transition-fast);
+}
+
+.nav-toggle:hover svg {
+    transform: scale(1.1);
+}
+
+.nav-toggle:active {
+    transform: scale(0.95);
 }
 
 /* Media Queries */
@@ -151,20 +164,54 @@
     }
     
     .nav-links {
-        gap: var(--spacing-md);
+        position: absolute;
+        top: calc(100% + 1px); /* Piccolo gap per evitare sovrapposizioni */
+        left: 0;
+        right: 0;
+        background-color: var(--navbar-footer-bg);
+        flex-direction: column;
+        padding: var(--spacing-md);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        gap: var(--spacing-sm);
+        z-index: 100;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all var(--transition-fast);
+    }
+    
+    .nav-links.nav-links-active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
     }
     
     .nav-links a {
-        font-size: var(--font-size-sm);
+        padding: var(--spacing-sm) var(--spacing-md);
+        border-radius: var(--border-radius-sm);
+        transition: background-color var(--transition-fast);
+        text-align: center;
     }
-}
-
-@media (max-width: 480px) {
-    .nav-links {
-        display: none; /* Hidden on very small screens for now */
+    
+    .nav-links a:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .nav-links a::after {
+        display: none; /* Rimuove la linea sotto nei mobile */
+    }
+    
+    .nav-links a[disabled] {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background-color: transparent !important;
     }
     
     .nav-toggle {
         display: block;
     }
+}
+
+@media (max-width: 480px) {
+    /* Eredita gli stili dal media query 768px */
 }
