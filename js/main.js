@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Set active navigation state
             setActiveNavLink();
             
-            // Initialize mobile menu
+            // Initialize mobile menu - IMPORTANTE: questa chiamata mancava!
             initializeMobileMenu();
             
             // Initialize theme (future feature)
@@ -81,16 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Remove from DOM after animation completes
                 setTimeout(() => {
                     loadingOverlay.remove();
-                    // Close menu when scrolling
-                let lastScrollY = window.scrollY;
-                window.addEventListener('scroll', () => {
-                    if (Math.abs(window.scrollY - lastScrollY) > 50 && navLinks.classList.contains('nav-links-active')) {
-                        navLinks.classList.remove('nav-links-active');
-                        navToggle.setAttribute('aria-expanded', 'false');
-                    }
-                    lastScrollY = window.scrollY;
-                });
-            }, 350);
+                }, 350);
             }, 500);
         }
     }
@@ -142,40 +133,98 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     /**
-     * Initialize mobile menu toggle
+     * Initialize mobile menu toggle - VERSIONE MIGLIORATA
      */
     function initializeMobileMenu() {
-        // Wait for navbar to load
+        // Aspetta che il navbar sia caricato completamente
         setTimeout(() => {
             const navToggle = document.querySelector('.nav-toggle');
             const navLinks = document.querySelector('.nav-links');
             const navbar = document.querySelector('.main-nav');
             
-            if (navToggle && navLinks) {
-                navToggle.addEventListener('click', (e) => {
+            if (!navToggle || !navLinks || !navbar) {
+                // Se gli elementi non sono ancora pronti, riprova
+                setTimeout(initializeMobileMenu, 100);
+                return;
+            }
+            
+            let menuOpen = false;
+            
+            // Funzione per aprire/chiudere il menu
+            function toggleMenu(e) {
+                if (e) {
+                    e.preventDefault();
                     e.stopPropagation();
-                    navLinks.classList.toggle('nav-links-active');
-                    navToggle.setAttribute('aria-expanded', 
-                        navLinks.classList.contains('nav-links-active') ? 'true' : 'false'
-                    );
-                });
+                }
                 
-                // Close menu when clicking outside
-                document.addEventListener('click', (e) => {
-                    if (!navbar.contains(e.target) && navLinks.classList.contains('nav-links-active')) {
-                        navLinks.classList.remove('nav-links-active');
-                        navToggle.setAttribute('aria-expanded', 'false');
+                menuOpen = !menuOpen;
+                
+                if (menuOpen) {
+                    navLinks.style.display = 'flex';
+                    navLinks.classList.add('nav-links-active');
+                    navToggle.setAttribute('aria-expanded', 'true');
+                } else {
+                    navLinks.style.display = 'none';
+                    navLinks.classList.remove('nav-links-active');
+                    navToggle.setAttribute('aria-expanded', 'false');
+                }
+            }
+            
+            // Gestione eventi per dispositivi touch e mouse
+            let touchStarted = false;
+            
+            // Eventi touch
+            navToggle.addEventListener('touchstart', function(e) {
+                touchStarted = true;
+                e.preventDefault();
+            }, { passive: false });
+            
+            navToggle.addEventListener('touchend', function(e) {
+                if (touchStarted) {
+                    e.preventDefault();
+                    toggleMenu(e);
+                    touchStarted = false;
+                }
+            }, { passive: false });
+            
+            // Evento click per dispositivi non-touch
+            navToggle.addEventListener('click', function(e) {
+                if (!touchStarted) {
+                    toggleMenu(e);
+                }
+            });
+            
+            // Chiudi il menu quando si clicca fuori
+            document.addEventListener('touchstart', function(e) {
+                if (menuOpen && !navbar.contains(e.target)) {
+                    toggleMenu();
+                }
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (menuOpen && !navbar.contains(e.target)) {
+                    toggleMenu();
+                }
+            });
+            
+            // Chiudi il menu quando si clicca su un link
+            navLinks.querySelectorAll('a').forEach(function(link) {
+                link.addEventListener('click', function() {
+                    if (menuOpen) {
+                        toggleMenu();
                     }
                 });
-                
-                // Close menu when clicking on a link
-                navLinks.querySelectorAll('a').forEach(link => {
-                    link.addEventListener('click', () => {
-                        navLinks.classList.remove('nav-links-active');
-                        navToggle.setAttribute('aria-expanded', 'false');
-                    });
-                });
-            }
+            });
+            
+            // Chiudi il menu durante lo scroll
+            let lastScrollY = window.scrollY;
+            window.addEventListener('scroll', function() {
+                if (Math.abs(window.scrollY - lastScrollY) > 50 && menuOpen) {
+                    toggleMenu();
+                }
+                lastScrollY = window.scrollY;
+            });
+            
         }, 200);
     }
     
@@ -256,7 +305,7 @@ document.addEventListener('DOMContentLoaded', function() {
         updateYear,
         setActiveNavLink,
         hideLoadingOverlay,
-        initializeMobileMenu
+        initMobileMenu: initializeMobileMenu
     };
     
     // Initialize application
