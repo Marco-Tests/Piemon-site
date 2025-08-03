@@ -738,6 +738,131 @@ const SITE_CONFIG = {
                     <li>Le performance rimangono ottime grazie all'uso estensivo della texture cache e rendering ottimizzato.</li>
                 </ul>
             `
+        },
+        '2025-08-03': {
+            title: '[alpha-3.0] - Restyling grafico completo e menu principale',
+            content: `
+                <h4>[alpha-3.0] - 2025-08-03</h4>
+                
+                <h5>Aggiunto</h5>
+                
+                <ul>
+                    <li><strong>Main Menu completamente nuovo come schermata iniziale:</strong>
+                        <ul>
+                            <li>Implementato un <strong>menu principale stile Pokémon</strong> che appare all'avvio del gioco.</li>
+                            <li>Menu posizionato a sinistra dello schermo con tre opzioni: "Nuova partita", "Carica salvataggio", "Chiudi Piemon".</li>
+                            <li><strong>Titolo "PIEMON" in grande</strong> centrato nella parte superiore dello schermo.</li>
+                            <li>Sistema di <strong>key repeat</strong> per navigazione fluida con i tasti W/S (delay 300ms, intervallo 80ms).</li>
+                            <li>Background con <strong>noise statico procedurale</strong> generato dinamicamente per effetto retrò.</li>
+                            <li>Transizioni fluide tra menu principale e gioco con gestione stati dedicata.</li>
+                        </ul>
+                    </li>
+                    
+                    <li><strong>Sistema UI completamente ridisegnato con stile grafico unificato:</strong>
+                        <ul>
+                            <li><strong>Palette colori centralizzata</strong> nel config.h con costanti UI_COLOR per tutto il gioco:
+                                <ul>
+                                    <li>Background: rosso scuro (#300610)</li>
+                                    <li>Testo dual-color: dorato chiaro (#daa93b) per metà superiore, dorato scuro (#c27517) per metà inferiore</li>
+                                    <li>Bordi: dorato (#daa93b)</li>
+                                    <li>Selezioni: rosso scuro (#830b19) con bordo dorato scuro</li>
+                                </ul>
+                            </li>
+                            <li><strong>Testi con effetto dual-color</strong> che divide ogni testo in due colori diversi.</li>
+                            <li><strong>Background con texture noise procedurale</strong> per tutti i menu e finestre UI.</li>
+                            <li><strong>Doppio bordo colorato</strong> per le selezioni (bordo esterno dorato scuro, interno rosso scuro).</li>
+                        </ul>
+                    </li>
+                    
+                    <li><strong>Texture Cache significativamente espansa:</strong>
+                        <ul>
+                            <li>Nuova funzione <code>texture_cache_get_dual_color_text()</code> per creare testi bicolore con caching efficiente.</li>
+                            <li>Nuova funzione <code>texture_cache_generate_ui_background()</code> per generare sfondi con noise statico.</li>
+                            <li><strong>Algoritmo di noise procedurale a tre passate:</strong>
+                                <ul>
+                                    <li>Prima passata: noise fine scuro (pixel 2x2) con bassa intensità</li>
+                                    <li>Seconda passata: noise medio scuro (3-4 pixel) con pattern irregolare</li>
+                                    <li>Terza passata: noise fine chiaro per aggiungere variazione</li>
+                                </ul>
+                            </li>
+                            <li>Supporto per seed randomici per generare pattern unici ma deterministici.</li>
+                            <li>Cache key robuste per evitare collisioni e ottimizzare il riutilizzo.</li>
+                        </ul>
+                    </li>
+                    
+                    <li><strong>Key repeat system per tutti i menu:</strong>
+                        <ul>
+                            <li>Implementato un <strong>sistema di key repeat unificato</strong> per navigazione più fluida.</li>
+                            <li>Configurabile con delay iniziale (300ms) e intervallo di ripetizione (80ms).</li>
+                            <li>Applicato a: menu principale, menu di pausa, inventario, team, PC, market, impostazioni.</li>
+                        </ul>
+                    </li>
+                </ul>
+                
+                <h5>Modificato</h5>
+                
+                <ul>
+                    <li><strong>Tutti i sistemi UI aggiornati al nuovo stile grafico:</strong>
+                        <ul>
+                            <li><strong>Menu di pausa</strong>: ora con background noise, testi dual-color e nuovi bordi di selezione.</li>
+                            <li><strong>Inventario</strong>: ridisegnato con nuovo stile, titoli e oggetti con testo dual-color.</li>
+                            <li><strong>Team UI</strong>: lista Piemon e vista dettagli con nuovo design coerente.</li>
+                            <li><strong>PC Storage</strong>: griglia e dettagli Piemon con nuovo stile visivo.</li>
+                            <li><strong>Market</strong>: interfaccia negozio completamente ridisegnata.</li>
+                            <li><strong>Settings</strong>: menu impostazioni con nuovo look, barra volume stilizzata.</li>
+                            <li><strong>Battle UI</strong>: pannelli informativi e menu azioni aggiornati al nuovo stile.</li>
+                            <li><strong>Message Box</strong>: ora con background noise e testo dual-color.</li>
+                            <li><strong>FPS Display</strong>: piccolo box con noise in alto a sinistra quando attivo.</li>
+                        </ul>
+                    </li>
+                    
+                    <li><strong>Sistema di stati di gioco espanso:</strong>
+                        <ul>
+                            <li>Aggiunto nuovo stato <code>GAME_STATE_MAIN_MENU</code> per gestire il menu principale.</li>
+                            <li>Il gioco ora <strong>inizia sempre dal menu principale</strong> invece che direttamente nel mondo.</li>
+                            <li>Migliorata la gestione delle transizioni tra stati con supporto per il menu.</li>
+                            <li>L'opzione "Esci" nel menu di pausa ora riporta al <strong>menu principale</strong> invece di chiudere il gioco.</li>
+                        </ul>
+                    </li>
+                    
+                    <li><strong>Aggiornamenti asset e configurazione:</strong>
+                        <ul>
+                            <li><strong>Nuovo player sprite</strong>: aggiornato a <code>player-2.0.png</code> con grafica migliorata.</li>
+                            <li><strong>Nuovo Bala sprite</strong>: <code>bala-sprite-2.0.png</code> con dimensioni ridotte (30px invece di 40px).</li>
+                            <li>Frame della Bala aggiornati: 256x320 per frame (da 341x512).</li>
+                            <li><strong>Nuovo font</strong>: cambiato in <code>GNF.ttf</code> per migliore leggibilità.</li>
+                            <li>Percorso salvataggi aggiornato a <code>alpha-3/alpha-3.0/saves/</code> per la nuova versione.</li>
+                        </ul>
+                    </li>
+                    
+                    <li><strong>Miglioramenti rendering e performance:</strong>
+                        <ul>
+                            <li>Tutti i sistemi UI ora pre-generano le texture di background per evitare calcoli ripetuti.</li>
+                            <li>Utilizzo estensivo della texture cache per testi e background riduce allocazioni.</li>
+                            <li>Rendering del noise ottimizzato con pattern algoritmici invece di randomizzazione vera.</li>
+                            <li>Blending mode gestito correttamente per overlay e trasparenze.</li>
+                        </ul>
+                    </li>
+                    
+                    <li><strong>Ottimizzazioni codice e pulizia:</strong>
+                        <ul>
+                            <li>Rimosso codice legacy per rendering senza texture cache in tutti i moduli UI.</li>
+                            <li>Standardizzazione delle costanti di colore con prefisso <code>UI_COLOR_</code>.</li>
+                            <li>Gestione memoria migliorata con texture cache che evita leak.</li>
+                            <li>Codice più modulare e manutenibile con funzioni dedicate per elementi UI comuni.</li>
+                        </ul>
+                    </li>
+                </ul>
+                
+                <h5>Note</h5>
+                
+                <ul>
+                    <li>Il <strong>nuovo stile grafico unificato</strong> dona al gioco un aspetto molto più professionale e coerente, ispirato ai giochi Pokémon classici ma con tocchi moderni.</li>
+                    <li>Il <strong>main menu</strong> fornisce un punto di ingresso chiaro e permette gestione salvataggi più intuitiva.</li>
+                    <li>Il <strong>sistema di texture cache espanso</strong> migliora significativamente le performance con UI complesse.</li>
+                    <li>Il <strong>key repeat</strong> risolve il problema della navigazione lenta in liste lunghe (inventario pieno, PC con molti Piemon).</li>
+                </ul>
+            `
         }
     }
 };
