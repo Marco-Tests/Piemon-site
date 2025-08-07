@@ -863,6 +863,174 @@ const SITE_CONFIG = {
                     <li>Il <strong>key repeat</strong> risolve il problema della navigazione lenta in liste lunghe (inventario pieno, PC con molti Piemon).</li>
                 </ul>
             `
+        },
+        '2025-08-07': {
+            title: '[alpha-3.1] - Primi contenuti di gioco ufficiali: ambientazione treno e cutscene iniziale',
+            content: `
+                <h4>[alpha-3.1] - 2025-08-07</h4>
+                
+                <h5>Aggiunto</h5>
+                
+                <ul>
+                    <li><strong>Prime tilemap ufficiali del gioco - Ambientazione treno:</strong>
+                        <ul>
+                            <li>Implementate <strong>tre mappe del treno</strong> che sostituiscono le vecchie tilemap di test, mantenendo però tutte le meccaniche sviluppate.</li>
+                            <li><strong>train-tilemap-1-1.0.tmx</strong>: Primo vagone del treno (34x8 tiles) con sedili, corridoio e area del player.</li>
+                            <li><strong>train-tilemap-2-1.0.tmx</strong>: Connessione tra vagoni (7x7 tiles) e punto di discesa.</li>
+                            <li><strong>train-tilemap-3-1.0.tmx</strong>: Secondo vagone (34x8 tiles), identico al primo.</li>
+                            <li><strong>Nuovo tileset dedicato</strong> <code>train-tileset-1.0.tsx</code> con grafica specifica.</li>
+                            <li>Layer specializzati: "Lying-Player" per il player sdraiato iniziale, "Lying-NPC" per NPC addormentato, "Sits" per i sedili interattivi.</li>
+                            <li>Organizzazione strutturata in <code>assets/tilemaps/train/</code> per separare gli asset di gioco da quelli di test.</li>
+                        </ul>
+                    </li>
+                    
+                    <li><strong>Sistema di cutscene completo ed estensibile:</strong>
+                        <ul>
+                            <li>Implementato un <strong>framework di cutscene modulare</strong> con gestione stati e ID univoci per future espansioni.</li>
+                            <li><strong>Prima cutscene del gioco</strong>: introduzione sul treno con sequenza cinematica completa.</li>
+                            <li><strong>Fasi della cutscene del treno</strong>:
+                                <ul>
+                                    <li>Schermo nero iniziale di 26 secondi sincronizzato con audio di apertura</li>
+                                    <li>Effetto "blink" di apertura occhi (1 secondo)</li>
+                                    <li>Seconda schermata nera di transizione (1.5 secondi)</li>
+                                    <li>Visualizzazione della mappa con messaggio "Devo essermi addormentato."</li>
+                                    <li>Terza schermata nera (1 secondo)</li>
+                                    <li>Spawn del player con rimozione automatica del layer "Lying-Player"</li>
+                                    <li>Messaggio finale "Mi devo sbrigare a scendere dal treno."</li>
+                                </ul>
+                            </li>
+                            <li><strong>Gestione focus finestra</strong>: pausa/ripresa automatica della cutscene quando la finestra perde/riprende il focus.</li>
+                            <li><strong>Skip della cutscene</strong> con tasto ESC che posiziona immediatamente il player e avvia il gameplay.</li>
+                            <li>Timer con compensazione del tempo di pausa per mantenere sincronizzazione perfetta.</li>
+                        </ul>
+                    </li>
+                    
+                    <li><strong>Sistema audio espanso con effetti sonori:</strong>
+                        <ul>
+                            <li>Aggiunta <strong>terza traccia audio dedicata</strong> (<code>AUDIO_TRACK_SOUND_EFFECT</code>) per riproduzione simultanea di effetti.</li>
+                            <li><strong>Nuove funzioni API</strong>:
+                                <ul>
+                                    <li><code>audio_play_sound_effect()</code>: riproduce un effetto sonoro mettendo in pausa la musica</li>
+                                    <li><code>audio_stop_sound_effect()</code>: ferma l'effetto e riprende la musica precedente</li>
+                                    <li><code>audio_is_sound_effect_playing()</code>: verifica se un effetto è in riproduzione</li>
+                                </ul>
+                            </li>
+                            <li><strong>Effetti sonori implementati</strong>:
+                                <ul>
+                                    <li><code>train-cutscene.mp3</code>: audio di 26 secondi per la cutscene iniziale</li>
+                                    <li><code>portal-transition.mp3</code>: suono di transizione quando si attraversa un portale</li>
+                                </ul>
+                            </li>
+                            <li><strong>Sistema di salvataggio/ripristino tracce</strong>: memorizza automaticamente la musica corrente durante gli effetti.</li>
+                            <li>Gestione intelligente che evita riprese indesiderate della musica dopo effetti sonori.</li>
+                            <li>Threshold ridotti (da 1024 a 256 bytes) per transizioni audio più rapide.</li>
+                        </ul>
+                    </li>
+                    
+                    <li><strong>Sistema di tile rimovibili dinamicamente:</strong>
+                        <ul>
+                            <li>Implementato <strong>tracking dei tile rimossi</strong> per modifiche permanenti alle mappe durante il gameplay.</li>
+                            <li>Struttura <code>RemovedTile</code> per memorizzare coordinate e layer dei tile rimossi.</li>
+                            <li><strong>Funzioni di gestione</strong>:
+                                <ul>
+                                    <li><code>tilemap_add_removed_tile()</code>: marca un tile come rimosso</li>
+                                    <li><code>tilemap_is_tile_removed()</code>: verifica se un tile è stato rimosso</li>
+                                </ul>
+                            </li>
+                            <li>Array di 100 tile rimovibili per mappa con controllo duplicati automatico.</li>
+                            <li>Utilizzato per rimuovere permanentemente il layer "Lying-Player" dopo la cutscene.</li>
+                            <li>I tile rimossi vengono saltati durante il rendering per performance ottimali.</li>
+                        </ul>
+                    </li>
+                    
+                    <li><strong>Nuovo layer di rendering "Details-2":</strong>
+                        <ul>
+                            <li>Implementato <strong>layer speciale che viene renderizzato SOPRA il player</strong> per effetti di profondità.</li>
+                            <li>Sistema di rendering a due passate: prima tutti i layer tranne Details-2, poi player, infine Details-2.</li>
+                            <li>Funzione helper <code>render_details2_layer()</code> dedicata per gestione separata.</li>
+                            <li>Supporto completo nel sistema di cutscene con culling ottimizzato.</li>
+                        </ul>
+                    </li>
+                    
+                    <li><strong>Interazioni contestuali espanse:</strong>
+                        <ul>
+                            <li><strong>Interazione con NPC sdraiato</strong>: mostra "Zzz... Zzz... Zzz...".</li>
+                            <li><strong>Interazione con sedili del treno</strong>: messaggio "Non ho tempo, devo scendere dal treno.".</li>
+                            <li><strong>Sistema di priorità</strong>: l'NPC ha priorità sui sedili sottostanti per evitare conflitti.</li>
+                            <li>Controllo direzionale: i sedili rispondono solo se guardati da destra o sinistra.</li>
+                        </ul>
+                    </li>
+                </ul>
+                
+                <h5>Modificato</h5>
+                
+                <ul>
+                    <li><strong>Map Manager significativamente migliorato:</strong>
+                        <ul>
+                            <li>Nuova funzione <code>map_manager_init_with_map()</code> per inizializzare con una mappa specifica.</li>
+                            <li><strong>Durata transizione portali aumentata a 1750ms</strong> (da 300ms) per effetto più cinematico.</li>
+                            <li><strong>Cooldown portali ridotto a 500ms</strong> (da 1000ms) per navigazione più fluida.</li>
+                            <li>Gestione speciale del portale "portal-out-train" con messaggio "Coming soon", blocco transizione e flag <code>player_in_exit_portal</code> per evitare spam del messaggio quando si resta nel portale.</li>
+                            <li>Riproduzione automatica del suono di transizione quando si attraversa un portale normale.</li>
+                        </ul>
+                    </li>
+                    
+                    <li><strong>Sistema di salvataggio esteso (versione 21):</strong>
+                        <ul>
+                            <li>Aggiunto <strong>salvataggio completo dei tile rimossi</strong> per ogni mappa caricata.</li>
+                            <li>Struttura estesa per memorizzare nome mappa, numero e dettagli di ogni tile rimosso.</li>
+                            <li>Gestione robusta del caricamento con skip automatico per mappe non caricate.</li>
+                            <li>Percorso salvataggi aggiornato a <code>alpha-3/alpha-3.1/saves/</code>.</li>
+                        </ul>
+                    </li>
+                    
+                    <li><strong>Audio system ottimizzato:</strong>
+                        <ul>
+                            <li><strong>Delay drasticamente ridotti</strong> per transizioni più fluide:
+                                <ul>
+                                    <li>Pausa stream: da 100ms/50ms a 10ms</li>
+                                    <li>Clear stream: da 50ms a 5ms</li>
+                                    <li>Cleanup: da 50ms a 10ms per traccia</li>
+                                </ul>
+                            </li>
+                            <li>Mutex lock migliorato con controlli aggiuntivi per evitare deadlock.</li>
+                            <li>Gestione <code>saved_track</code> con valore invalido (<code>AUDIO_TRACK_COUNT</code>) quando non c'è musica da ripristinare.</li>
+                        </ul>
+                    </li>
+                    
+                    <li><strong>Config.h riorganizzato per le nuove mappe:</strong>
+                        <ul>
+                            <li>Aggiunte costanti per <strong>dimensioni mappe del treno</strong>: TRAIN_MAP1_W/H, TRAIN_MAP2_W/H, TRAIN_MAP3_W/H.</li>
+                            <li>Nuovi percorsi: <code>TRAIN_TILEMAPS_PATH</code>, <code>TRAIN_TILEMAP1_TMX</code>, <code>TRAIN_TILEMAP2_TMX</code>, <code>TRAIN_TILEMAP3_TMX</code>.</li>
+                            <li>Percorsi audio separati: <code>SOUNDS_PATH</code> per effetti sonori, <code>SONGS_PATH</code> per musica.</li>
+                            <li><strong>Enum CutsceneID</strong> per identificazione univoca delle cutscene.</li>
+                            <li>Costanti temporali per la cutscene del treno con durate precise per ogni fase.</li>
+                        </ul>
+                    </li>
+                </ul>
+                
+                <h5>Rimosso</h5>
+                
+                <ul>
+                    <li><strong>Tilemap di test eliminate:</strong>
+                        <ul>
+                            <li>Rimossa <code>tilemap-2.2.tmx</code> (mappa principale di test 48x36).</li>
+                            <li>Rimossa <code>tilemap2-1.0.tmx</code> (mappa interna di test 36x24).</li>
+                            <li>Rimossa <code>tilemap3-1.0.tmx</code> (centro Piemon di test 14x12).</li>
+                            <li>Asset di test mantenuti in <code>assets/test-assets/</code> per retrocompatibilità ma non più utilizzati nel gameplay principale.</li>
+                        </ul>
+                    </li>
+                </ul>
+                
+                <h5>Note</h5>
+                
+                <ul>
+                    <li><strong>Prima versione con contenuti di gioco ufficiali</strong>: le tilemap del treno rappresentano l'inizio della narrativa vera e propria del gioco.</li>
+                    <li>Il <strong>sistema di cutscene</strong> è progettato per essere facilmente estendibile con nuove sequenze cinematiche.</li>
+                    <li>Il <strong>sistema di tile rimovibili</strong> apre possibilità per modifiche permanenti del mondo di gioco.</li>
+                    <li>Le <strong>ottimizzazioni audio</strong> migliorano la reattività del gioco durante le transizioni.</li>
+                </ul>
+            `
         }
     }
 };
