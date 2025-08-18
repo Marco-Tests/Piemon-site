@@ -1031,6 +1031,192 @@ const SITE_CONFIG = {
                     <li>Le <strong>ottimizzazioni audio</strong> migliorano la reattività del gioco durante le transizioni.</li>
                 </ul>
             `
+        },
+        '2025-08-18': {
+            title: '[alpha-3.2] - Ottimizzazioni profonde e treno più realistico',
+            content: `
+                <h4>[alpha-3.2] - 2025-08-18</h4>
+                
+                <h5>Aggiunto</h5>
+                
+                <ul>
+                    <li><strong>Sistema Event-Driven completo con Event System:</strong>
+                        <ul>
+                            <li>Implementato un <strong>sistema di eventi modulare</strong> (<code>event_system.h/c</code>) con architettura publisher-subscriber per disaccoppiare i componenti del gioco.</li>
+                            <li>Supporto per <strong>oltre 40 tipi di eventi</strong> diversi: battaglia, Piemon, player, inventario, team, mappa, interazioni, market, PC, audio, cutscene e sistema.</li>
+                            <li><strong>Coda di eventi con priorità</strong> per gestione asincrona e differita degli eventi (fino a 256 eventi in coda).</li>
+                            <li>Sistema di <strong>handler multipli per evento</strong> (fino a 16 handler per tipo) con context personalizzabili.</li>
+                            <li>Funzioni helper per creazione rapida di eventi comuni con strutture dati predefinite.</li>
+                            <li><strong>Statistiche di debug</strong> per monitoraggio eventi pubblicati e handler registrati.</li>
+                            <li>Integrazione completa con tutti i sottosistemi del gioco per comunicazione event-driven.</li>
+                        </ul>
+                    </li>
+                    
+                    <li><strong>Sistema di UI Components riutilizzabili:</strong>
+                        <ul>
+                            <li>Implementato modulo <strong>UI Components</strong> (<code>ui_components.h/c</code>) con componenti grafici riutilizzabili e consistenti.</li>
+                            <li><strong>UIBox</strong>: componente base per finestre con background noise procedurale e bordi stilizzati.</li>
+                            <li><strong>UIList</strong>: lista scrollabile con key repeat, selezione e gestione item dinamica.</li>
+                            <li><strong>UIConfirmDialog</strong>: dialogo di conferma Yes/No con layout automatico.</li>
+                            <li><strong>UIProgressBar</strong>: barra di progresso personalizzabile per HP, esperienza, etc.</li>
+                            <li><strong>UISelector</strong>: sistema di selezione con doppio bordo dorato per evidenziare elementi.</li>
+                            <li>Funzioni helper per <strong>rendering overlay</strong>, <strong>testo centrato</strong> e <strong>gestione key repeat unificata</strong>.</li>
+                            <li>Tutti i componenti utilizzano la texture cache per ottimizzazione delle performance.</li>
+                        </ul>
+                    </li>
+                    
+                    <li><strong>System Monitor per diagnostica avanzata:</strong>
+                        <ul>
+                            <li>Nuovo modulo <strong>System Monitor</strong> (<code>system_monitor.h/c</code>) per monitoraggio performance in tempo reale.</li>
+                            <li><strong>Tracking utilizzo CPU</strong> del processo con calcolo percentuale e smoothing.</li>
+                            <li><strong>Monitoraggio memoria RAM</strong> utilizzata dal processo.</li>
+                            <li>Supporto <strong>cross-platform</strong> per Windows, Linux e macOS con API native.</li>
+                            <li>Integrazione con FPS Display per visualizzazione unificata delle metriche.</li>
+                            <li>Update throttling (massimo ogni 500ms) per ridurre overhead.</li>
+                            <li>Calcolo accurato con gestione overflow e validazione dati.</li>
+                        </ul>
+                    </li>
+                    
+                    <li><strong>Sistema di Game Constants centralizzato:</strong>
+                        <ul>
+                            <li>Implementato <strong>Game Constants</strong> (<code>game_constants.h</code>) per gestione centralizzata di tutte le costanti di gioco.</li>
+                            <li>Organizzazione in categorie: World, Combat, Piemon, Player, Inventory, Team, PC, Market, Camera, Texture Cache, Game System.</li>
+                            <li><strong>Oltre 100 costanti</strong> estratte e centralizzate dai vari moduli per manutenibilità.</li>
+                            <li>Costanti per damage calculation, experience curves, capture mechanics, animation timings.</li>
+                            <li>Parametri di battaglia, UI, audio e sistema tutti configurabili da un unico punto.</li>
+                        </ul>
+                    </li>
+                    
+                    <li><strong>Quadtree per ottimizzazione collisioni:</strong>
+                        <ul>
+                            <li>Implementato sistema <strong>Quadtree</strong> (<code>quadtree.h/c</code>) che sostituisce il deprecato Spatial Hash Grid.</li>
+                            <li><strong>Suddivisione adattiva dello spazio</strong> con massimo 8 rettangoli per nodo prima della suddivisione.</li>
+                            <li>Pool pre-allocato di <strong>512 nodi</strong> per evitare allocazioni dinamiche durante il gameplay.</li>
+                            <li>Profondità massima di 8 livelli con dimensione minima nodo di 32 pixel.</li>
+                            <li><strong>Query ottimizzate O(log n)</strong> invece di O(n) per controllo collisioni.</li>
+                            <li>Statistiche di debug per analisi performance (nodi visitati, profondità raggiunta).</li>
+                            <li>Buffer query pre-allocato per evitare allocazioni durante i controlli.</li>
+                            <li>Gestione intelligente di oggetti che attraversano quadranti multipli.</li>
+                        </ul>
+                    </li>
+                </ul>
+                
+                <h5>Modificato</h5>
+                
+                <ul>
+                    <li><strong>Refactoring completo dell'architettura principale:</strong>
+                        <ul>
+                            <li><strong>main.c suddiviso in 4 moduli specializzati</strong>:
+                                <ul>
+                                    <li><code>main.c</code>: Entry point minimale che coordina l'inizializzazione e avvio.</li>
+                                    <li><code>game.c</code>: Gestione stato principale del gioco e coordinamento sistemi.</li>
+                                    <li><code>game_init.c</code>: Inizializzazione strutturata di tutti i sottosistemi in ordine corretto.</li>
+                                    <li><code>game_loop.c</code>: Game loop principale con fixed timestep e gestione eventi.</li>
+                                </ul>
+                            </li>
+                            <li><strong>GameContext unificato</strong> che contiene tutti i sottosistemi in una singola struttura.</li>
+                            <li>Inizializzazione modulare con funzioni dedicate per ogni categoria di sistemi.</li>
+                            <li>Gestione errori migliorata con cleanup parziale in caso di fallimento inizializzazione.</li>
+                            <li>Separazione chiara tra logica di inizializzazione, update e rendering.</li>
+                        </ul>
+                    </li>
+                    
+                    <li><strong>Riorganizzazione completa della struttura del progetto:</strong>
+                        <ul>
+                            <li><strong>Nuova struttura directory</strong> per migliore organizzazione del codice:
+                                <ul>
+                                    <li><code>core/</code>: Sistemi fondamentali.</li>
+                                    <li><code>graphics/</code>: Rendering e grafica.</li>
+                                    <li><code>gameplay/</code>: Logica di gioco.</li>
+                                    <li><code>systems/</code>: Sistemi di supporto.</li>
+                                    <li><code>ui/</code>: Interfaccia utente.</li>
+                                </ul>
+                            </li>
+                            <li>Tutti gli header file riorganizzati con path relativi corretti.</li>
+                            <li>Makefile aggiornato per supportare la nuova struttura.</li>
+                        </ul>
+                    </li>
+                    
+                    <li><strong>Sistema Audio completamente riprogettato:</strong>
+                        <ul>
+                            <li><strong>Fix critico del segmentation fault</strong> che si verificava casualmente attraversando i portali.</li>
+                            <li>Nuova architettura semplificata con <strong>singolo stream audio</strong> invece di tracce multiple.</li>
+                            <li><strong>Due decoder MP3 separati</strong> (music e sfx) per evitare freeze durante transizioni.</li>
+                            <li>Gestione corretta del <strong>ripristino musica</strong> dopo effetti sonori con flag <code>auto_restore_enabled</code>.</li>
+                            <li>Nuova funzione <code>audio_play_sound_effect_no_restore()</code> per cutscene senza ripristino automatico.</li>
+                            <li><strong>Pump audio migliorato</strong> con prefetch buffer per streaming più fluido.</li>
+                            <li>Mutex locking ottimizzato per evitare deadlock e race conditions.</li>
+                            <li>Threshold ridotti (da 1024 a 256 bytes) per transizioni audio più rapide.</li>
+                            <li>Cleanup robusto con pause e delay appropriati prima della distruzione degli stream.</li>
+                        </ul>
+                    </li>
+                    
+                    <li><strong>Save/Load System potenziato (versione 22):</strong>
+                        <ul>
+                            <li><strong>Nuovo formato con header strutturato</strong> contenente magic number, versione, checksum e timestamp.</li>
+                            <li><strong>Validazione integrità dati</strong> con checksum CRC32 su tutto il contenuto del salvataggio.</li>
+                            <li><strong>Salvataggio atomico</strong> con scrittura su file temporaneo e rename finale per evitare corruzione.</li>
+                            <li>Sistema di <strong>error codes dettagliati</strong> (9 tipi) con messaggi di errore descrittivi.</li>
+                            <li>Funzioni <code>safe_read/write</code> con controllo errori per ogni operazione I/O.</li>
+                            <li>Macro <code>SAVE_FIELD/LOAD_FIELD</code> per serializzazione type-safe e manutenibile.</li>
+                            <li>Registry centralizzato per sprite Piemon con lookup automatico.</li>
+                        </ul>
+                    </li>
+                    
+                    <li><strong>FPS Display espanso con System Monitor:</strong>
+                        <ul>
+                            <li>Integrazione completa con il nuovo <strong>System Monitor</strong> per visualizzazione metriche.</li>
+                            <li>Visualizzazione <strong>utilizzo CPU in percentuale</strong> con update ogni 500ms.</li>
+                            <li>Display <strong>memoria RAM utilizzata</strong> in MB.</li>
+                            <li>Layout migliorato con box padding dinamico basato sul contenuto.</li>
+                            <li>Utilizzo di <strong>UIBox</strong> per rendering consistente con resto dell'interfaccia.</li>
+                            <li>Cache texture separate per FPS, RAM e CPU con invalidazione selettiva.</li>
+                        </ul>
+                    </li>
+                    
+                    <li><strong>Traduzione completa in inglese:</strong>
+                        <ul>
+                            <li><strong>Tutti i commenti del codice tradotti</strong> dall'italiano all'inglese per accessibilità.</li>
+                            <li>Nomi di variabili e funzioni mantenuti consistenti con convenzioni inglesi.</li>
+                            <li>Messaggi di debug e log convertiti in inglese.</li>
+                        </ul>
+                    </li>
+                    
+                    <li><strong>Train tilemap e assets aggiornati:</strong>
+                        <ul>
+                            <li>Aggiunto layer "Mural" nella seconda tilemap del treno: interagendo mostra il messaggio "RABBIA".</li>
+                            <li>Inserito layer "Dirt" nel primo e terzo vagone: dettagli ambientali di sporcizia e usura per aumentare il realismo del treno.</li>
+                            <li>Aggiornato <strong>audio cutscene del treno</strong> a <code>train-cutscene-2.0.mp3</code> per maggior realismo.</li>
+                            <li>Path salvataggi aggiornato a <code>alpha-3/alpha-3.2/saves/</code> per la nuova versione.</li>
+                        </ul>
+                    </li>
+                </ul>
+                
+                <h5>Rimosso</h5>
+                
+                <ul>
+                    <li><strong>Spatial Hash Grid deprecato:</strong>
+                        <ul>
+                            <li>Rimosso <code>spatial_hash.h/c</code> in favore del più efficiente Quadtree.</li>
+                            <li>Eliminate tutte le referenze a <code>spatial_hash_*</code> functions dal collision system.</li>
+                        </ul>
+                    </li>
+                </ul>
+                
+                <h5>Note</h5>
+                
+                <ul>
+                    <li>Il <strong>nuovo Event System</strong> rappresenta un cambio architetturale fondamentale che rende il gioco molto più modulare e manutenibile.</li>
+                    <li>Il <strong>Quadtree</strong> migliora drasticamente le performance con mappe grandi e molte collision rect.</li>
+                    <li>La <strong>riorganizzazione del codice</strong> in directory tematiche facilita la navigazione e lo sviluppo futuro.</li>
+                    <li>Il <strong>sistema di UI Components</strong> garantisce consistenza visiva e riduce duplicazione di codice UI.</li>
+                    <li>Il <strong>System Monitor</strong> è essenziale per debugging performance e ottimizzazione.</li>
+                    <li>Il <strong>fix dell'audio</strong> risolve uno dei bug più critici che causava crash casuali del gioco.</li>
+                    <li>Il nuovo <strong>formato di salvataggio con checksum</strong> previene corruzione dati e migliora affidabilità.</li>
+                    <li><strong>Game Constants centralizzate</strong> facilitano il bilanciamento del gameplay e future modifiche.</li>
+                    <li>La traduzione in inglese dei commenti rende il progetto accessibile a più contributori.</li>
+                </ul>
+            `
         }
     }
 };
